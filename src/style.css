@@ -2,3 +2,12 @@
 
 /* Suppression explicite des enregistrements */
 .deletebutton{color:#b42318;margin-left:12px}.deletebutton:hover{color:#7a271a}.deletebutton:disabled{opacity:.55;cursor:wait}
+
+.idea-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.idea-tabs button{padding:11px 15px;border:1px solid #d7dce2;background:white;border-radius:12px;cursor:pointer;font:inherit}
+.idea-tabs button.selected{background:#173c37;color:white;border-color:#173c37}
+.notification-list{display:grid;gap:8px;margin-top:12px}
+.notification{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid #e2e8e5;border-radius:12px}
+.notification.unread{background:#f2f8f4;border-color:#b4d7c2}
+.notification>button:first-child{flex:1;text-align:left;border:0;background:transparent;cursor:pointer;font:inherit}
+.notification small{display:block;margin-top:5px;opacity:.7}
