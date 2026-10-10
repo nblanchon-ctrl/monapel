@@ -75,8 +75,10 @@ async function removeItem(item:RecordRow){
   }
   setNotice('Élément supprimé avec succès.');void loadNotifications();
  }catch(e){
-  const message=e instanceof Error?e.message:String(e);
-  setNotice('Suppression impossible : '+message);
+  const err=e as {message?:string;code?:string;details?:string;hint?:string};
+  const message=e instanceof Error?e.message:err?.message||JSON.stringify(e);
+  const info=[err?.code&&`Code : ${err.code}`,err?.details,err?.hint].filter(Boolean).join(' — ');
+  setNotice('Suppression impossible : '+message+(info?' — '+info:''));
   console.error('Erreur Supabase lors de la suppression',e);
  }finally{setDeleting(null)}
 }
