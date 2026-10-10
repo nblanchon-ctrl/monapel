@@ -78,6 +78,7 @@ export default function FinanceModule({db,role,userId}:Props){
   const d=ops.filter(o=>o.type==='depense').reduce((n,o)=>n+o.montant_centimes,0);
   return {r,d,balance:r-d,count:ops.length};
  };
+ const paid=operations.filter(o=>o.statut==='paye');
  const months=Array.from({length:12},(_,i)=>{
   const date=new Date(parseDate(selected?.debut||dateToday()).getFullYear(),parseDate(selected?.debut||dateToday()).getMonth()+i,1);
   const ym=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
@@ -85,7 +86,6 @@ export default function FinanceModule({db,role,userId}:Props){
   return {label:date.toLocaleDateString('fr-FR',{month:'short'}),r:ops.filter(o=>o.type==='recette').reduce((n,o)=>n+o.montant_centimes,0),d:ops.filter(o=>o.type==='depense').reduce((n,o)=>n+o.montant_centimes,0)};
  });
  const maxMonth=Math.max(1,...months.map(m=>Math.max(m.r,m.d)));
- const paid=operations.filter(o=>o.statut==='paye');
  const received=paid.filter(o=>o.type==='recette').reduce((n,o)=>n+o.montant_centimes,0);
  const spent=paid.filter(o=>o.type==='depense').reduce((n,o)=>n+o.montant_centimes,0);
  const pendingIncome=operations.filter(o=>o.type==='recette'&&o.statut!=='paye'&&o.statut!=='annule').reduce((n,o)=>n+o.montant_centimes,0);
