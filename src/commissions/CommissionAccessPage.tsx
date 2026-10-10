@@ -19,7 +19,10 @@ export default function CommissionAccessPage({db,commissionId}:Props){
  async function login(e:React.FormEvent){e.preventDefault();setBusy(true);setMessage('');try{
   const {data,error}=await db.functions.invoke('commission-code-login',{body:{commissionId,email:email.trim().toLowerCase(),code:code.trim()}});
   if(error){let detail=error.message;try{const response=(error as any).context;if(response&&typeof response.json==='function'){const body=await response.json();detail=body.error||detail}}catch{}throw new Error(detail)}
-  if(!data?.access_token||!data?.refresh_token)throw new Error(data?.error||'Session indisponible.');
+  // Les réponses sans jetons ne doivent jamais être prises pour une connexion réussie.
+  if(!data?.access_token||!data?.refresh_token){
+   throw new Error(data?.error || 'La fonction de connexion ne renvoie pas de session. Redéployez commission-code-login depuis le correctif fourni.');
+  }
   const r=await db.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(r.error)throw r.error;
   const check=await db.from('commission_members').select('id').eq('commission_id',commissionId).eq('user_id',r.data.user!.id).eq('status','active').maybeSingle();
   if(check.error||!check.data)throw new Error('Accès à cette commission non activé. Contactez le bureau.');
