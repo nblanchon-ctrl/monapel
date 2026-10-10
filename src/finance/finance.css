@@ -8,3 +8,5 @@
 .finance-upload{display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:#e9f3ee;color:#174637;padding:7px 10px;border-radius:8px}
 .finance-upload input{display:none}.finance-table button{display:inline-flex;align-items:center;gap:5px;border:0;background:#e9f3ee;border-radius:7px;padding:6px 8px;cursor:pointer}
 .finance-actions select{max-width:300px}
+
+.finance-claims{display:grid;gap:16px}.finance-claim-row{padding:14px 0;border-top:1px solid #dfe6e2;display:grid;gap:7px}.finance-claim-row button{justify-self:start}.finance-claim-row p{margin:3px 0}
