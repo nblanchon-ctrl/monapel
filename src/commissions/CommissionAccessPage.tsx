@@ -14,7 +14,7 @@ export default function CommissionAccessPage({db,commissionId}:Props){
  const [busy,setBusy]=useState(false);
  const [message,setMessage]=useState('');
  useEffect(()=>{let live=true;void db.auth.getSession().then(({data})=>{if(live)setSession(data.session)});const{data:{subscription}}=db.auth.onAuthStateChange((_event,s)=>{if(live)setSession(s)});return()=>{live=false;subscription.unsubscribe()}},[db]);
- useEffect(()=>{let live=true;setAuthorized(false);setLoading(true);if(!session){setLoading(false);return}void(async()=>{const r=await db.from('commission_members').select('commission_id').eq('commission_id',commissionId).eq('user_id',session.user.id).eq('status','active').maybeSingle();if(!live)return;setAuthorized(!!r.data&&!r.error);if(r.error)setMessage('Impossible de vérifier vos droits : '+r.error.message);setLoading(false)})();return()=>{live=false}},[db,commissionId,session?.user.id]);
+ useEffect(()=>{let live=true;setAuthorized(false);setLoading(true);if(!session){setLoading(false);return}void(async()=>{const r=await db.rpc('commission_has_access',{cid:commissionId});if(!live)return;setAuthorized(r.data===true&&!r.error);if(r.error)setMessage('Impossible de vérifier vos droits : '+r.error.message);setLoading(false)})();return()=>{live=false}},[db,commissionId,session?.user.id]);
  useEffect(()=>{if(!authorized)return;void db.from('commissions').select('name').eq('id',commissionId).maybeSingle().then(({data})=>{if(data?.name)setCommissionName(data.name)})},[db,commissionId,authorized]);
  async function login(e:React.FormEvent){e.preventDefault();setBusy(true);setMessage('');try{
   const {data,error}=await db.functions.invoke('commission-code-login',{body:{commissionId,email:email.trim().toLowerCase(),code:code.trim()}});
@@ -24,8 +24,9 @@ export default function CommissionAccessPage({db,commissionId}:Props){
    throw new Error(data?.error || 'La fonction de connexion ne renvoie pas de session. Redéployez commission-code-login depuis le correctif fourni.');
   }
   const r=await db.auth.setSession({access_token:data.access_token,refresh_token:data.refresh_token});if(r.error)throw r.error;
-  const check=await db.from('commission_members').select('id').eq('commission_id',commissionId).eq('user_id',r.data.user!.id).eq('status','active').maybeSingle();
-  if(check.error||!check.data)throw new Error('Accès à cette commission non activé. Contactez le bureau.');
+  const check=await db.rpc('commission_has_access',{cid:commissionId});
+  if(check.error)throw new Error('Vérification des droits impossible : '+check.error.message);
+  if(check.data!==true)throw new Error('Votre compte est connecté, mais votre accès à la commission est inactif. Le correctif SQL d’activation doit être appliqué.');
   setAuthorized(true);
  }catch(err){setMessage(err instanceof Error?err.message:'Connexion impossible. Réessayez.')}finally{setBusy(false)}}
  if(authorized&&session)return <div className="ca-workspace"><header className="ca-workspace-top"><span>Mon APEL · {commissionName||'Espace commission'}</span><button onClick={()=>void db.auth.signOut()}>Déconnexion</button></header><CommissionsModule db={db} userId={session.user.id} isBureau={false} canManage={false}/></div>;
