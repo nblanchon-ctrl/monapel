@@ -1,0 +1,11 @@
+import React,{useEffect,useState} from 'react';
+import type {SupabaseClient} from '@supabase/supabase-js';
+import './operations.css';
+type Idea={id:string;title?:string;description?:string;status?:string;source?:unknown;author_id?:unknown;contact_name?:unknown};
+export default function IdeaDetail({db,idea,userId,onClose,onConvert}:{db:SupabaseClient;idea:Idea;userId:string;onClose:()=>void;onConvert:()=>void}){
+ const [comments,setComments]=useState<{id:string;body:string;created_at:string;author_id:string}[]>([]),[members,setMembers]=useState<{id:string;full_name:string}[]>([]),[text,setText]=useState(''),[error,setError]=useState('');
+ const refresh=async()=>{const [c,m]=await Promise.all([db.from('idea_comments').select('*').eq('idea_id',idea.id).order('created_at'),db.from('profiles').select('id,full_name').eq('active',true)]);if(c.error)setError(c.error.message);else setComments(c.data||[]);if(!m.error)setMembers(m.data||[])};
+ useEffect(()=>{void refresh()},[idea.id,db]);
+ const send=async(e:React.FormEvent)=>{e.preventDefault();if(!text.trim())return;const {error}=await db.from('idea_comments').insert({idea_id:idea.id,author_id:userId,body:text.trim()});if(error)setError(error.message);else{setText('');void refresh()}};
+ return <div className="op-overlay" onClick={onClose}><div className="op-dialog" onClick={e=>e.stopPropagation()}><button className="op-close" onClick={onClose}>Fermer ×</button><span className="tag">{idea.status||'Proposée'}</span><h2>{idea.title}</h2><p>{idea.description||'Aucune description'}</p><p className="muted">Référent : {idea.source==='public'?String(idea.contact_name||'Parent'):members.find(m=>m.id===idea.author_id)?.full_name||'Membre du bureau'}</p><h3>Commentaires ({comments.length})</h3>{comments.map(c=><div className="op-comment" key={c.id}><strong>{members.find(m=>m.id===c.author_id)?.full_name||'Membre du bureau'}</strong><small>{new Date(c.created_at).toLocaleString('fr-FR')}</small><p>{c.body}</p></div>)}<form onSubmit={send}><textarea required maxLength={5000} value={text} onChange={e=>setText(e.target.value)} placeholder="Ajouter un commentaire…"/><button className="primary">Publier</button></form>{error&&<p role="alert">{error}</p>}<button className="primary" onClick={onConvert}>Transformer en opération</button></div></div>;
+}
