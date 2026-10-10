@@ -38,7 +38,7 @@ export default function OudonHome({page,onNavigate,posts,events,bureau,db}:Props
     <div className="oudon-hero-inner">
      <div className="oudon-logo-wrap"><img src="/oudon/logo-ecole.jpg" alt="Logo de l'école Saint-Joseph Oudon" /></div>
      <div className="oudon-copy"><div className="oudon-kicker">APEL SAINT-JOSEPH OUDON</div><h1>Ensemble<br/><span>pour nos enfants</span></h1><p>L’APEL de l’école Saint-Joseph d’Oudon réunit les parents pour soutenir les projets éducatifs, animer la vie de l’école et créer du lien entre les familles.</p><div className="oudon-actions"><button className="oudon-primary" onClick={()=>nav('bureau-public')}>Découvrir notre APEL <ArrowRight size={18}/></button><button className="oudon-secondary" onClick={()=>nav('news')}>Les actualités</button></div></div>
-     <div className="oudon-landscape" role="img" aria-label="Vue aérienne du château et du village d'Oudon" />
+     <div className="oudon-landscape" role="img" aria-label="Vue aérienne du château et du village d'Oudon" style={{ backgroundImage: "linear-gradient(90deg, #eaf9ff 0%, rgba(234,249,255,0) 30%), url('/oudon/Vue_aerienne_Oudon.jpg')" }} />
     </div><div className="oudon-wave" aria-hidden="true" />
    </section>
    <section className="oudon-tiles" aria-label="Accès rapides">
