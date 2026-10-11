@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mais au fait, c’est quoi l’APEL ? Le jeu</title>
+<meta name="description" content="Un mini-jeu de 5 minutes pour découvrir l’APEL : qui sont ces parents, ce qu’ils font, comment l’association est organisée et comment y participer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Thème : cahier d'écolier (clair) / tableau d'école (sombre)
+   ========================================================= */
+:root{
+  --papier:#FBFCF9;
+  --carte:#FFFFFF;
+  --ligne:#E2EAF6;
+  --ligne-forte:#BFD0EA;
+  --encre:#23408E;
+  --encre-douce:#52669F;
+  --texte:#1C2647;
+  --marge:#E0443E;
+  --surligneur:#FFE45C;
+  --surligneur-texte:#1C2647;
+  --vert:#1F8A5B;
+  --vert-fond:#E3F5EC;
+  --rouge:#C8332D;
+  --rouge-fond:#FDECEB;
+  --cartable:#E0443E;
+  --cartable-fonce:#B5302B;
+  --ombre:#23408E;
+  --sol:#EEF3FB;
+  --marge-x:clamp(14px,5vw,64px);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papier:#22413A; --carte:#2B4D45; --ligne:rgba(255,255,255,.04); --ligne-forte:rgba(255,255,255,.09);
+    --encre:#F3F1E7; --encre-douce:#C5D1CA; --texte:#F3F1E7; --marge:#FF8A80;
+    --surligneur:#F2DA5E; --surligneur-texte:#1C2647; --vert:#7FE0AE; --vert-fond:rgba(127,224,174,.14);
+    --rouge:#FF9C93; --rouge-fond:rgba(255,138,128,.14); --cartable:#FF7468; --cartable-fonce:#D9554A;
+    --ombre:#10251F; --sol:#2B4D45; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --papier:#22413A; --carte:#2B4D45; --ligne:rgba(255,255,255,.04); --ligne-forte:rgba(255,255,255,.09);
+  --encre:#F3F1E7; --encre-douce:#C5D1CA; --texte:#F3F1E7; --marge:#FF8A80;
+  --surligneur:#F2DA5E; --surligneur-texte:#1C2647; --vert:#7FE0AE; --vert-fond:rgba(127,224,174,.14);
+  --rouge:#FF9C93; --rouge-fond:rgba(255,138,128,.14); --cartable:#FF7468; --cartable-fonce:#D9554A;
+  --ombre:#10251F; --sol:#2B4D45; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:1.0625rem;
+  line-height:1.55;
+  color:var(--texte);
+  background-color:var(--papier);
+  /* Lignes Seyès */
+  background-image:
+    repeating-linear-gradient(to bottom, var(--ligne-forte) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(to bottom, var(--ligne) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(to right, var(--ligne) 0 1px, transparent 1px 32px);
+  min-height:100vh;
+}
+/* Ligne de marge rouge */
+body::before{
+  content:""; position:fixed; top:0; bottom:0; left:var(--marge-x);
+  width:2px; background:var(--marge); opacity:.5; pointer-events:none; z-index:0;
+}
+.page{
+  position:relative; z-index:1;
+  max-width:980px; margin:0 auto;
+  padding:20px 18px 48px calc(var(--marge-x) + 18px);
+}
+h1,h2,h3{font-family:"Fredoka","Atkinson Hyperlegible",system-ui,sans-serif;color:var(--encre);margin:0}
+p{margin:0}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+
+/* ---------- Boutons ---------- */
+.btn,.btn-secondaire,.btn-option{
+  font:inherit; font-family:"Fredoka",system-ui,sans-serif; font-weight:600;
+  cursor:pointer; border-radius:14px; text-decoration:none;
+  display:inline-flex; align-items:center; justify-content:center; gap:.5em;
+  transition:transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.btn{
+  background:var(--encre); color:var(--papier);
+  border:2px solid var(--encre);
+  padding:.75em 1.4em; font-size:1.1rem;
+  box-shadow:4px 4px 0 var(--surligneur);
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--surligneur)}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--surligneur)}
+.btn-secondaire{
+  background:var(--carte); color:var(--encre);
+  border:2px solid var(--encre); padding:.7em 1.3em;
+}
+.btn-secondaire:hover{background:var(--sol)}
+.btn-option{
+  background:var(--carte); color:var(--encre);
+  border:2px solid var(--encre-douce);
+  padding:.8em 1em; font-size:1rem; text-align:left; justify-content:flex-start;
+  width:100%;
+}
+.btn-option:hover:not(:disabled){border-color:var(--encre);background:var(--sol)}
+.btn-option:disabled{cursor:default}
+.btn-option.juste{border-color:var(--vert);background:var(--vert-fond);color:var(--texte)}
+.btn-option.faux{border-color:var(--rouge);background:var(--rouge-fond);color:var(--texte)}
+.btn-option.choisi{border-color:var(--encre);background:var(--surligneur);color:var(--surligneur-texte)}
+:focus-visible{outline:3px solid var(--surligneur);outline-offset:3px;box-shadow:0 0 0 6px var(--encre)}
+
+/* ---------- Mascotte ---------- */
+.mascotte .corps{fill:var(--cartable);stroke:var(--encre);stroke-width:3}
+.mascotte .rabat{fill:var(--cartable-fonce);stroke:var(--encre);stroke-width:3;stroke-linejoin:round}
+.mascotte .anse{fill:none;stroke:var(--encre);stroke-width:4;stroke-linecap:round}
+.mascotte .boucle{fill:var(--surligneur);stroke:var(--encre);stroke-width:2.5}
+.mascotte .oeil{fill:#1C2647}
+.mascotte .reflet{fill:#fff}
+.mascotte .bouche{fill:none;stroke:#1C2647;stroke-width:3;stroke-linecap:round}
+.mascotte .joue{fill:#fff;opacity:.35}
+
+/* ---------- Écran d'accueil ---------- */
+.debut{
+  min-height:calc(100vh - 80px);
+  display:grid; align-content:center; gap:28px;
+  padding:24px 0;
+}
+.debut-titre{
+  font-size:clamp(2.3rem,7.5vw,4.6rem);
+  font-weight:700; line-height:1.02; letter-spacing:-.01em;
+  max-width:13ch;
+}
+.debut-titre .apel{
+  display:inline-block; background:var(--surligneur); color:var(--surligneur-texte);
+  padding:0 .15em; border-radius:6px; transform:rotate(-1.5deg);
+}
+.debut-rangee{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.debut .mascotte{width:clamp(96px,18vw,150px);height:auto;flex:none}
+.bulle{
+  position:relative; background:var(--carte); color:var(--texte);
+  border:2px solid var(--encre); border-radius:18px;
+  padding:14px 18px; max-width:52ch;
+  box-shadow:4px 4px 0 var(--ombre);
+}
+.debut .bulle{flex:1 1 280px}
+.debut-actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.petit{font-size:.95rem;color:var(--encre-douce)}
+
+/* ---------- Écran école ---------- */
+.entete{
+  display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+  gap:14px 24px; margin-bottom:18px;
+}
+.entete h1{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:700;line-height:1.1}
+.carnet{min-width:0}
+.carnet h2{font-size:1rem;font-weight:600;margin-bottom:6px;color:var(--encre-douce)}
+.carnet ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px;max-width:520px}
+.carnet li{
+  font-size:.85rem; line-height:1.2;
+  border:1.5px dashed var(--encre-douce); border-radius:8px;
+  padding:5px 9px; color:var(--encre-douce); background:var(--carte);
+  min-width:44px; text-align:center;
+}
+.carnet li.trouve{
+  border-style:solid; border-color:var(--encre);
+  background:var(--surligneur); color:var(--surligneur-texte); font-weight:700;
+}
+
+.plan{
+  position:relative; width:100%;
+  border:2px solid var(--encre); border-radius:20px; overflow:hidden;
+  background:var(--carte); box-shadow:6px 6px 0 var(--ombre);
+}
+.plan svg{display:block;width:100%;height:auto}
+.plan .trait{fill:none;stroke:var(--encre);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.plan .fin{stroke-width:2}
+.plan .plein{fill:var(--carte)}
+.plan .sol{fill:var(--sol)}
+.plan .tuile{fill:var(--cartable)}
+.plan .vitre{fill:var(--sol)}
+.plan .tableau{fill:#2E5A4E}
+.plan .jaune{fill:var(--surligneur)}
+.plan .feuillage{fill:var(--vert-fond)}
+.plan .txt{font-family:"Fredoka",system-ui,sans-serif;font-weight:600;fill:var(--encre)}
+.plan .craie{font-family:"Fredoka",system-ui,sans-serif;font-weight:500;fill:#F3F1E7}
+
+.hotspot{
+  position:absolute; transform:translate(-50%,-50%);
+  font:inherit; font-family:"Fredoka",system-ui,sans-serif; font-weight:600; font-size:1rem;
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--carte); color:var(--encre);
+  border:2px solid var(--encre); border-radius:999px;
+  padding:6px 14px 6px 8px; cursor:pointer; white-space:nowrap;
+  box-shadow:3px 3px 0 var(--ombre);
+  transition:transform .12s ease;
+}
+.hotspot:hover{transform:translate(-50%,-50%) scale(1.06)}
+.hotspot .pastille{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--encre); background:var(--carte);
+  display:grid;place-items:center;font-size:.8rem;line-height:1;flex:none;
+}
+.hotspot.fait{background:var(--surligneur);color:var(--surligneur-texte)}
+.hotspot.fait .pastille{background:var(--encre);color:var(--papier)}
+.hotspot.ferme{border-style:dashed;box-shadow:none;opacity:.75}
+.hotspot:not(.fait):not(.ferme) .pastille{animation:appel 1.8s ease-in-out infinite}
+@keyframes appel{0%,100%{box-shadow:0 0 0 0 var(--surligneur)}50%{box-shadow:0 0 0 6px var(--surligneur)}}
+
+.astuce{display:flex;align-items:center;gap:12px;margin-top:20px}
+.astuce .mascotte{width:64px;height:auto;flex:none}
+.astuce .bulle{padding:10px 14px;box-shadow:3px 3px 0 var(--ombre)}
+
+.liste-lieux{display:none;list-style:none;margin:18px 0 0;padding:0;gap:8px;grid-template-columns:1fr 1fr}
+.liste-lieux button{width:100%}
+.liste-lieux .fait{background:var(--surligneur);color:var(--surligneur-texte);border-color:var(--encre)}
+.liste-lieux .ferme{border-style:dashed;opacity:.75}
+
+@media (max-width:699px){
+  .hotspot{padding:0;width:34px;height:34px;justify-content:center;font-size:.9rem}
+  .hotspot .pastille{width:26px;height:26px;border:none;background:transparent}
+  .hotspot .nom{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .liste-lieux{display:grid}
+}
+
+/* ---------- Fiche (dialog) ---------- */
+dialog{
+  width:min(660px,calc(100% - 20px)); max-height:calc(100% - 20px);
+  padding:0; border:2px solid var(--encre); border-radius:22px;
+  background:var(--papier); color:var(--texte);
+  box-shadow:8px 8px 0 var(--ombre);
+  background-image:
+    repeating-linear-gradient(to bottom, var(--ligne) 0 1px, transparent 1px 8px);
+}
+dialog::backdrop{background:rgba(20,30,60,.55)}
+.fiche{padding:18px 20px 22px;display:grid;gap:16px}
+.fiche-tete{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fiche-tete h2{font-size:1.5rem;font-weight:700}
+.fermer{
+  font:inherit;font-size:1.5rem;line-height:1;width:40px;height:40px;flex:none;
+  border-radius:50%;border:2px solid var(--encre);background:var(--carte);color:var(--encre);cursor:pointer;
+}
+.dialogue{display:flex;align-items:flex-start;gap:12px}
+.dialogue .mascotte{width:68px;height:auto;flex:none;margin-top:4px}
+.dialogue .bulle{box-shadow:3px 3px 0 var(--ombre);flex:1}
+.zone-jeu{display:grid;gap:12px}
+.progression{font-size:.9rem;color:var(--encre-douce)}
+.options{display:grid;gap:8px}
+.options.deux{grid-template-columns:1fr 1fr}
+.options.deux .btn-option{justify-content:center;text-align:center}
+.retour{
+  border-radius:14px;padding:12px 14px;border:2px solid;
+}
+.retour.ok{border-color:var(--vert);background:var(--vert-fond)}
+.retour.ko{border-color:var(--rouge);background:var(--rouge-fond)}
+.retour.neutre{border-color:var(--encre);background:var(--carte)}
+.actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px}
+
+.pyramide{list-style:none;margin:0;padding:0;display:grid;gap:6px;justify-items:center}
+.palier{
+  border:2px dashed var(--encre-douce); border-radius:12px; background:var(--carte);
+  padding:8px 12px; text-align:center; min-height:44px;
+  display:grid; place-items:center; color:var(--encre-douce);
+}
+.palier:nth-child(1){width:58%}
+.palier:nth-child(2){width:72%}
+.palier:nth-child(3){width:86%}
+.palier:nth-child(4){width:100%}
+.palier.rempli{border-style:solid;border-color:var(--encre);background:var(--surligneur);color:var(--surligneur-texte)}
+.palier strong{font-family:"Fredoka",system-ui,sans-serif;font-weight:600;display:block}
+.palier small{font-size:.85rem}
+.secoue{animation:secoue .35s ease}
+@keyframes secoue{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.indice-carte{
+  background:var(--carte); border:2px solid var(--encre); border-radius:16px;
+  padding:16px 18px; display:grid; gap:10px;
+}
+.indice-carte h3{font-size:1rem;font-weight:600;color:var(--encre-douce)}
+.indice-texte{font-family:"Fredoka",system-ui,sans-serif;font-size:1.35rem;font-weight:600;line-height:1.3}
+mark{background:var(--surligneur);color:var(--surligneur-texte);padding:0 .15em;border-radius:4px}
+
+/* ---------- Écran final ---------- */
+.final{display:grid;gap:24px;padding:20px 0}
+.final-tete{display:flex;align-items:center;gap:16px}
+.final-tete .mascotte{width:clamp(80px,14vw,120px);height:auto;flex:none}
+.final h2{font-size:clamp(2rem,6vw,3.4rem);font-weight:700;line-height:1.05}
+.definition{
+  font-family:"Fredoka",system-ui,sans-serif; font-weight:500;
+  font-size:clamp(1.35rem,3.4vw,2rem); line-height:1.45; color:var(--encre);
+  max-width:34ch;
+}
+.surligne{
+  color:var(--texte);
+  background-image:linear-gradient(var(--surligneur),var(--surligneur));
+  background-repeat:no-repeat; background-position:0 85%;
+  background-size:0% 70%;
+  animation:surligner .7s ease forwards; animation-delay:calc(var(--d) * .55s + .3s);
+  border-radius:3px; padding:0 .08em;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
+:root[data-theme="dark"] .surligne{color:var(--surligneur-texte)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .surligne{color:var(--surligneur-texte)}}
+@keyframes surligner{to{background-size:100% 70%}}
+.savoir{
+  background:var(--carte); border:2px solid var(--encre); border-radius:16px;
+  padding:16px 18px; max-width:60ch; display:grid; gap:6px;
+}
+.savoir h3{font-size:1.1rem;font-weight:600}
+.final-actions{display:flex;flex-wrap:wrap;gap:12px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition:none!important}
+  .surligne{background-size:100% 70%}
+}
+
+.retour-site{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;margin-bottom:14px;border:2px solid var(--encre);border-radius:12px;background:var(--carte);color:var(--encre);font-weight:700;text-decoration:none;font-size:.9rem}
+.retour-site:hover{background:var(--surligneur);color:var(--surligneur-texte)}
+</style>
+</head>
+<body>
+
+<!-- Mascotte réutilisable -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bouclette" viewBox="0 0 100 100">
+      <g class="mascotte">
+        <path class="anse" d="M37 24 Q50 6 63 24"/>
+        <rect class="corps" x="16" y="22" width="68" height="64" rx="12"/>
+        <path class="rabat" d="M16 34 Q16 22 28 22 H72 Q84 22 84 34 V44 Q50 60 16 44 Z"/>
+        <rect class="boucle" x="43" y="44" width="14" height="11" rx="3"/>
+        <ellipse class="joue" cx="27" cy="74" rx="6" ry="4"/>
+        <ellipse class="joue" cx="73" cy="74" rx="6" ry="4"/>
+        <circle class="oeil" cx="36" cy="66" r="5"/>
+        <circle class="oeil" cx="64" cy="66" r="5"/>
+        <circle class="reflet" cx="37.6" cy="64.4" r="1.6"/>
+        <circle class="reflet" cx="65.6" cy="64.4" r="1.6"/>
+        <path class="bouche" d="M43 75 Q50 81 57 75"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="page">
+  <a class="retour-site" href="/saint-joseph-oudon" aria-label="Revenir au site de l’APEL Saint-Joseph Oudon">← Retour au site de l’APEL Saint-Joseph Oudon</a>
+
+  <!-- ========== ÉCRAN 1 : accueil ========== -->
+  <section id="ecran-debut" class="debut" aria-labelledby="titre-debut">
+    <h1 id="titre-debut" class="debut-titre">Mais au fait, c’est quoi <span class="apel">l’APEL</span>&nbsp;?</h1>
+    <div class="debut-rangee">
+      <svg class="mascotte" viewBox="0 0 100 100" role="img" aria-label="Bouclette, le cartable de l’école"><use href="#bouclette"/></svg>
+      <p class="bulle">Bonjour&nbsp;! Moi, c’est Bouclette, le cartable de l’école. Vous avez déjà entendu parler de l’APEL sans trop savoir ce que c’est&nbsp;? On mène l’enquête ensemble&nbsp;: six lieux à visiter, six indices à trouver, et la réponse à la fin.</p>
+    </div>
+    <div class="debut-actions">
+      <button class="btn" id="btn-commencer">Commencer l’enquête</button>
+      <p class="petit">Environ 5 minutes, sans inscription.</p>
+    </div>
+  </section>
+
+  <!-- ========== ÉCRAN 2 : l'école ========== -->
+  <section id="ecran-ecole" hidden aria-labelledby="titre-ecole">
+    <div class="entete">
+      <h1 id="titre-ecole">L’enquête à l’école</h1>
+      <div class="carnet">
+        <h2 id="carnet-titre">Carnet d’enquête</h2>
+        <ol id="carnet" aria-labelledby="carnet-titre"></ol>
+      </div>
+    </div>
+
+    <div class="plan" id="plan">
+      <svg viewBox="0 0 800 500" role="img" aria-label="Dessin d’une école avec son portail, sa cour, ses classes et son toit">
+        <!-- ciel / décor -->
+        <path class="trait fin" d="M60 90 q14 -22 36 -10 q10 -18 30 -6 q22 -4 20 16 q-4 12 -20 10 h-58 q-18 -2 -8 -10z"/>
+        <path class="trait fin" d="M630 70 q12 -18 30 -8 q10 -14 26 -4 q18 -2 16 14 q-4 10 -16 8 h-50 q-14 -2 -6 -10z"/>
+        <!-- sol / cour -->
+        <rect class="sol" x="0" y="420" width="800" height="80"/>
+        <path class="trait" d="M0 420 H800"/>
+        <!-- marelle -->
+        <g class="trait fin">
+          <rect x="430" y="440" width="34" height="24"/><rect x="464" y="440" width="34" height="24"/>
+          <rect x="498" y="440" width="34" height="24"/><rect x="532" y="432" width="34" height="20"/>
+          <rect x="532" y="452" width="34" height="20"/><rect x="566" y="440" width="34" height="24"/>
+          <path d="M600 440 q22 12 0 24"/>
+        </g>
+        <circle class="jaune trait fin" cx="640" cy="470" r="11"/>
+        <!-- bâtiment -->
+        <rect class="plein trait" x="250" y="200" width="330" height="220"/>
+        <polygon class="tuile trait" points="228,202 415,92 602,202"/>
+        <circle class="plein trait" cx="415" cy="160" r="18"/>
+        <path class="trait fin" d="M415 148 v12 h9"/>
+        <path class="trait" d="M415 92 V50"/>
+        <path class="jaune trait fin" d="M415 52 h34 l-8 9 l8 9 h-34z"/>
+        <!-- fenêtres étage -->
+        <rect class="vitre trait" x="275" y="228" width="50" height="56" rx="4"/>
+        <path class="trait fin" d="M300 228 v56 M275 256 h50"/>
+        <rect class="vitre trait" x="345" y="228" width="50" height="56" rx="4"/>
+        <path class="trait fin" d="M370 228 v56 M345 256 h50"/>
+        <!-- fenêtre de classe avec tableau -->
+        <rect class="vitre trait" x="420" y="222" width="140" height="78" rx="6"/>
+        <rect class="tableau" x="436" y="234" width="108" height="44" rx="3"/>
+        <text class="craie" x="490" y="262" font-size="15" text-anchor="middle">Bonjour !</text>
+        <circle class="jaune trait fin" cx="452" cy="290" r="8"/>
+        <circle class="plein trait fin" cx="476" cy="292" r="7"/>
+        <circle class="jaune trait fin" cx="528" cy="290" r="8"/>
+        <!-- rez-de-chaussée -->
+        <rect class="tuile trait" x="296" y="330" width="68" height="90" rx="6"/>
+        <circle class="jaune" cx="352" cy="378" r="4"/>
+        <rect class="plein trait fin" x="290" y="310" width="80" height="18" rx="4"/>
+        <text class="txt" x="330" y="324" font-size="12" text-anchor="middle">Accueil</text>
+        <rect class="vitre trait" x="400" y="336" width="60" height="50" rx="4"/>
+        <path class="trait fin" d="M430 336 v50"/>
+        <rect class="vitre trait" x="490" y="336" width="60" height="50" rx="4"/>
+        <path class="trait fin" d="M520 336 v50"/>
+        <!-- portail -->
+        <rect class="plein trait" x="60" y="300" width="16" height="120"/>
+        <rect class="plein trait" x="184" y="300" width="16" height="120"/>
+        <path class="trait" d="M68 300 Q130 240 192 300"/>
+        <text class="txt" x="130" y="292" font-size="18" text-anchor="middle">École</text>
+        <path class="trait fin" d="M90 316 V420 M106 312 V420 M122 310 V420 M138 310 V420 M154 312 V420 M170 316 V420 M76 360 H184"/>
+        <path class="trait fin" d="M200 380 H250 M200 400 H250 M212 370 V420 M228 370 V420 M244 370 V420"/>
+        <!-- arbre -->
+        <rect class="plein trait" x="680" y="300" width="18" height="120"/>
+        <circle class="feuillage trait" cx="689" cy="262" r="56"/>
+        <path class="trait fin" d="M660 250 q10 -10 20 0 M690 280 q10 -10 20 0 M700 230 q10 -10 20 0"/>
+        <!-- panneau sortie -->
+        <path class="trait" d="M760 340 V420"/>
+        <rect class="plein trait" x="716" y="306" width="78" height="34" rx="6"/>
+        <text class="txt" x="748" y="329" font-size="15" text-anchor="middle">Sortie</text>
+        <path class="trait fin" d="M774 316 l10 7 l-10 7"/>
+      </svg>
+      <!-- les lieux cliquables sont injectés ici -->
+    </div>
+
+    <ul class="liste-lieux" id="liste-lieux" aria-label="Lieux à explorer"></ul>
+
+    <div class="astuce">
+      <svg class="mascotte" viewBox="0 0 100 100" aria-hidden="true"><use href="#bouclette"/></svg>
+      <p class="bulle" id="astuce" aria-live="polite">Touchez un lieu de l’école pour commencer. Vous pouvez les visiter dans l’ordre que vous voulez&nbsp;; la sortie, ce sera pour la fin.</p>
+    </div>
+  </section>
+
+  <!-- ========== ÉCRAN 3 : conclusion ========== -->
+  <section id="ecran-fin" class="final" hidden aria-labelledby="titre-fin">
+    <div class="final-tete">
+      <svg class="mascotte" viewBox="0 0 100 100" aria-hidden="true"><use href="#bouclette"/></svg>
+      <h2 id="titre-fin">Enquête résolue&nbsp;!</h2>
+    </div>
+    <p>Avec vos six indices, voici la réponse complète&nbsp;:</p>
+    <p class="definition" id="definition"></p>
+    <p id="score" class="petit"></p>
+    <div class="savoir">
+      <h3>Le saviez-vous&nbsp;?</h3>
+      <p>En Loire-Atlantique, l’APEL&nbsp;44 rassemble environ 280&nbsp;établissements et 30&nbsp;000&nbsp;familles adhérentes. Pour en savoir plus, le plus simple est de contacter l’APEL de l’école de votre enfant.</p>
+    </div>
+    <div class="final-actions">
+      <a class="btn" id="lien-apel44" target="_blank" rel="noopener">Découvrir l’APEL de Loire-Atlantique</a>
+      <a class="btn-secondaire" id="lien-apel-national" target="_blank" rel="noopener">Visiter le site national de l’APEL</a>
+      <button class="btn-secondaire" id="btn-rejouer">Rejouer</button>
+    </div>
+  </section>
+</main>
+
+<!-- ========== Fiche d'un lieu ========== -->
+<dialog id="fiche" aria-labelledby="fiche-titre">
+  <div class="fiche">
+    <div class="fiche-tete">
+      <h2 id="fiche-titre"></h2>
+      <button class="fermer" id="fiche-fermer" aria-label="Fermer et revenir à l’école">×</button>
+    </div>
+    <div class="dialogue">
+      <svg class="mascotte" viewBox="0 0 100 100" aria-hidden="true"><use href="#bouclette"/></svg>
+      <p class="bulle" id="bulle" aria-live="polite"></p>
+    </div>
+    <div class="zone-jeu" id="zone-jeu"></div>
+  </div>
+</dialog>
+
+<script>
+/* =========================================================
+   CONFIGURATION : liens de fin de jeu (à adapter)
+   ========================================================= */
+const CONFIG = {
+  lienApel44: "https://www.apel44.org",   // ⚠️ vérifiez l'adresse exacte du site de l'APEL 44
+  lienApelNational: "https://www.apel.fr"
+};
+
+/* =========================================================
+   CONTENU DU JEU
+   Chaque lieu : bulles d'introduction, un mini-jeu, un indice.
+   ========================================================= */
+const LIEUX = [
+  {
+    id: "portail", nom: "Le portail", pos: { x: 16.5, y: 50 },
+    court: "Des parents bénévoles",
+    indice: "une association de parents bénévoles",
+    phrase: "Une association de parents bénévoles.",
+    bulles: [
+      "APEL, ça veut dire Association de Parents d’élèves de l’Enseignement Libre.",
+      "On la trouve dans les écoles, collèges et lycées de l’enseignement catholique. Commençons par démêler le vrai du faux !"
+    ],
+    jeu: {
+      type: "quiz", deux: true, options: ["Vrai", "Faux"],
+      questions: [
+        { q: "« L’APEL, ce sont les enseignants de l’école. »", bonne: 1,
+          expl: "Ce sont des parents d’élèves, tous bénévoles. Les enseignants font partie de l’équipe éducative, avec qui l’APEL travaille main dans la main." },
+        { q: "« L’APEL d’une école est une association à part entière. »", bonne: 0,
+          expl: "Chaque APEL d’établissement est une association loi 1901, avec ses statuts et un conseil d’administration élu par les parents." },
+        { q: "« Pour s’engager à l’APEL, il faut des compétences particulières. »", bonne: 1,
+          expl: "Pas besoin d’être expert : un peu de temps, des idées et l’envie de faire vivre l’école suffisent." },
+        { q: "« Toutes les familles de l’école peuvent adhérer à l’APEL. »", bonne: 0,
+          expl: "L’adhésion est ouverte à toutes les familles de l’établissement, grâce à une cotisation annuelle." }
+      ]
+    },
+    bilan: "L’APEL, ce sont des parents comme vous, qui donnent un peu de leur temps pour les enfants et pour l’école."
+  },
+  {
+    id: "classe", nom: "La classe", pos: { x: 61, y: 40 },
+    court: "Représenter",
+    indice: "qui représente les familles",
+    phrase: "Elle représente les familles.",
+    bulles: [
+      "Dans les classes, l’APEL s’appuie sur des parents correspondants : ils font le lien entre les familles et l’équipe éducative.",
+      "L’APEL porte aussi la voix des parents auprès de la direction et participe à la réflexion sur le projet éducatif. Chacun dans son rôle ! À vous : qui faut-il contacter ?"
+    ],
+    jeu: {
+      type: "quiz",
+      options: ["Le parent correspondant", "L’enseignant", "L’APEL", "Le chef d’établissement"],
+      questions: [
+        { q: "Vous aimeriez savoir ce qui s’est dit au conseil de classe pour l’ensemble de la classe.", bonne: 0,
+          expl: "Le parent correspondant participe au conseil de classe et en fait le compte rendu aux familles." },
+        { q: "Votre enfant a du mal en maths et vous vous demandez comment l’aider.", bonne: 1,
+          expl: "La pédagogie, c’est le métier des enseignants. L’APEL ne s’en mêle pas : elle respecte les compétences de chacun." },
+        { q: "Vous avez une idée pour mieux accueillir les nouvelles familles à la rentrée.", bonne: 2,
+          expl: "Bonne idée à proposer à l’APEL ! Accueillir et rassembler les familles fait partie de ses missions." },
+        { q: "Vous avez une question sur l’inscription ou le règlement de l’école.", bonne: 3,
+          expl: "Les inscriptions et le règlement relèvent de la direction de l’établissement." }
+      ]
+    },
+    bilan: "L’APEL est la voix des parents dans l’école, et bien au-delà : elle représente aussi les familles auprès de l’Enseignement catholique et des pouvoirs publics."
+  },
+  {
+    id: "accueil", nom: "L’accueil", pos: { x: 41, y: 74 },
+    court: "Informer",
+    indice: "qui informe et accompagne les parents",
+    phrase: "Elle informe et accompagne les parents.",
+    bulles: [
+      "Être parent, ça pose plein de questions ! L’APEL propose des services pour informer et accompagner les familles.",
+      "Certains sont organisés par l’APEL de votre école, d’autres par l’APEL 44 et le réseau national. Et parfois, les deux ! À vous de deviner : qui propose quoi ?"
+    ],
+    jeu: {
+      type: "quiz",
+      options: ["L’APEL de l’école", "L’APEL 44 et le réseau", "Les deux"],
+      questions: [
+        { q: "Un vide-greniers ou un marché de Noël pour financer des projets de l’école.", bonne: 0,
+          expl: "C’est l’APEL de votre école qui organise ces actions, au plus près des familles, et qui décide avec l’établissement des projets à soutenir." },
+        { q: "L’aide à l’orientation : informations, rencontres et conseils pour choisir sa voie après la 3e ou le bac.", bonne: 1,
+          expl: "C’est un service de l’APEL 44 : des bénévoles formés accompagnent les jeunes et leurs parents dans leurs choix d’orientation." },
+        { q: "Apel Service : une ligne téléphonique où des professionnels écoutent et conseillent les parents.", bonne: 1,
+          expl: "C’est un service du réseau, proposé par l’APEL nationale et relayé par l’APEL 44. Il est accessible aux familles adhérentes." },
+        { q: "Famille & éducation, le magazine sur l’éducation reçu à la maison.", bonne: 1,
+          expl: "Le magazine est édité par le réseau national des APEL. Les familles le reçoivent grâce à leur adhésion à l’APEL de leur école." },
+        { q: "Une conférence-débat pour les parents sur les écrans, le sommeil ou le harcèlement.", bonne: 2,
+          expl: "Les deux ! L’APEL de votre école peut en organiser pour ses familles, et l’APEL 44 en propose aussi pour les parents de tout le département." }
+      ]
+    },
+    bilan: "Près de chez vous, l’APEL de l’école. Plus largement, l’APEL 44 et le réseau national. En adhérant à l’APEL de votre école, vous profitez des services des deux."
+  },
+  {
+    id: "cour", nom: "La cour", pos: { x: 64, y: 91 },
+    court: "Animer",
+    indice: "qui anime la vie de l’école",
+    phrase: "Elle anime la vie de l’école.",
+    bulles: [
+      "La cour, c’est le cœur de la vie de l’école. L’APEL contribue à l’animer, en lien avec l’équipe éducative.",
+      "Mais attention, elle ne fait pas tout ! À vous de trier : c’est l’APEL, ou pas ?"
+    ],
+    jeu: {
+      type: "quiz", deux: true, options: ["C’est l’APEL", "Pas l’APEL"],
+      questions: [
+        { q: "Organiser un café d’accueil pour les nouvelles familles.", bonne: 0,
+          expl: "Accueillir les nouveaux parents, c’est souvent la première action de l’APEL à la rentrée." },
+        { q: "Choisir les enseignants de l’école.", bonne: 1,
+          expl: "Le recrutement des enseignants ne relève pas des parents mais de l’établissement et de l’Enseignement catholique." },
+        { q: "Organiser la fête de fin d’année avec l’école.", bonne: 0,
+          expl: "Fêtes, marchés de Noël, vide-greniers : l’APEL participe à ces temps forts qui rassemblent la communauté." },
+        { q: "Aider à financer une sortie scolaire ou du matériel.", bonne: 0,
+          expl: "Grâce aux cotisations et aux actions menées, l’APEL soutient des projets pour le bien-être des élèves." },
+        { q: "Entretenir et réparer les bâtiments de l’école.", bonne: 1,
+          expl: "La gestion et l’entretien des bâtiments relèvent de l’OGEC, une autre association, distincte de l’APEL." }
+      ]
+    },
+    bilan: "L’APEL rassemble les familles et fait vivre l’école, toujours en lien avec la direction et les équipes."
+  },
+  {
+    id: "toit", nom: "Le toit", pos: { x: 52, y: 21 },
+    court: "Un réseau",
+    indice: "au sein d’un grand mouvement national",
+    phrase: "Elle fait partie d’un grand mouvement national.",
+    bulles: [
+      "D’ici, on voit loin ! L’APEL de votre école n’est pas toute seule : elle fait partie d’un grand réseau.",
+      "Remettez les quatre niveaux dans l’ordre, du plus proche de l’école au plus large."
+    ],
+    jeu: {
+      type: "ordre",
+      items: [
+        { nom: "L’APEL d’établissement", desc: "dans l’école de votre enfant" },
+        { nom: "L’APEL départementale", desc: "l’APEL 44, en Loire-Atlantique" },
+        { nom: "L’APEL académique", desc: "pour l’académie de Nantes" },
+        { nom: "L’APEL nationale", desc: "pour toute la France" }
+      ],
+      fin: "Bravo ! Chaque niveau soutient le précédent : l’APEL 44, par exemple, forme et accompagne les bénévoles des APEL d’école et fait circuler l’information."
+    },
+    bilan: "Ensemble, ces associations forment le mouvement des APEL, la plus importante association de parents d’élèves en France."
+  },
+  {
+    id: "sortie", nom: "La sortie", pos: { x: 90, y: 77 }, finale: true,
+    court: "Participer",
+    indice: "et où chaque parent a sa place",
+    phrase: "Chaque parent peut y trouver sa place.",
+    bulles: [
+      "Dernière étape ! L’APEL n’existe que grâce aux parents, et il y a mille façons d’y participer.",
+      "Laquelle vous ressemble le plus ? Touchez-en une, ou plusieurs."
+    ],
+    jeu: {
+      type: "engagement",
+      options: [
+        { titre: "Adhérer", texte: "La cotisation des familles est la principale ressource de l’APEL. Adhérer, c’est déjà soutenir ses actions, et recevoir le magazine Famille & éducation." },
+        { titre: "Donner un coup de main", texte: "Tenir un stand, aider à préparer une fête, partager un talent : quelques heures de temps en temps, c’est déjà précieux." },
+        { titre: "Devenir parent correspondant", texte: "Vous faites le lien entre les familles de la classe et l’équipe éducative." },
+        { titre: "Rejoindre le conseil d’administration", texte: "Élu lors de l’assemblée générale, vous participez aux décisions et aux projets de l’APEL de votre école." }
+      ]
+    },
+    bilan: "Adhérer, aider de temps en temps ou s’engager dans la durée : chacun participe selon son temps et ses envies."
+  }
+];
+
+const BRAVO = ["Bien vu !", "Exactement !", "Bravo !", "Tout juste !"];
+
+/* =========================================================
+   ÉTAT
+   ========================================================= */
+const etat = { trouves: new Set(), score: 0, total: 0, courant: null };
+
+const $ = (s, r = document) => r.querySelector(s);
+const ecrans = { debut: $("#ecran-debut"), ecole: $("#ecran-ecole"), fin: $("#ecran-fin") };
+const dlg = $("#fiche"), bulle = $("#bulle"), zone = $("#zone-jeu");
+
+function afficherEcran(nom) {
+  Object.entries(ecrans).forEach(([k, el]) => el.hidden = k !== nom);
+  window.scrollTo({ top: 0 });
+  const titre = ecrans[nom].querySelector("h1, h2");
+  if (titre) { titre.setAttribute("tabindex", "-1"); titre.focus({ preventScroll: true }); }
+}
+
+const nbHorsFinale = () => LIEUX.filter(l => !l.finale && etat.trouves.has(l.id)).length;
+const sortieOuverte = () => nbHorsFinale() >= LIEUX.filter(l => !l.finale).length;
+
+/* =========================================================
+   CARTE DE L'ÉCOLE
+   ========================================================= */
+function construireCarte() {
+  const plan = $("#plan"), liste = $("#liste-lieux");
+  LIEUX.forEach(lieu => {
+    const b = document.createElement("button");
+    b.className = "hotspot";
+    b.dataset.id = lieu.id;
+    b.style.left = lieu.pos.x + "%";
+    b.style.top = lieu.pos.y + "%";
+    b.innerHTML = `<span class="pastille" aria-hidden="true">?</span><span class="nom">${lieu.nom}</span>`;
+    b.addEventListener("click", () => cliquerLieu(lieu));
+    plan.appendChild(b);
+
+    const li = document.createElement("li");
+    const b2 = document.createElement("button");
+    b2.className = "btn-option";
+    b2.dataset.id = lieu.id;
+    b2.textContent = lieu.nom;
+    b2.addEventListener("click", () => cliquerLieu(lieu));
+    li.appendChild(b2);
+    liste.appendChild(li);
+  });
+  majCarte();
+}
+
+function majCarte() {
+  LIEUX.forEach(lieu => {
+    const fait = etat.trouves.has(lieu.id);
+    const ferme = Boolean(lieu.finale) && !sortieOuverte();
+    document.querySelectorAll(`[data-id="${lieu.id}"]`).forEach(b => {
+      b.classList.toggle("fait", fait);
+      b.classList.toggle("ferme", ferme && !fait);
+      const etatTxt = fait ? "visité" : ferme ? "pas encore ouvert" : "à explorer";
+      b.setAttribute("aria-label", `${lieu.nom} (${etatTxt})`);
+      const p = b.querySelector(".pastille");
+      if (p) p.textContent = fait ? "✓" : ferme ? "…" : "?";
+    });
+  });
+  // Carnet
+  const carnet = $("#carnet");
+  carnet.innerHTML = LIEUX.map(l => etat.trouves.has(l.id)
+    ? `<li class="trouve">${l.court}</li>`
+    : `<li><span aria-hidden="true">…</span><span class="sr">Indice à trouver</span></li>`).join("");
+  $("#carnet-titre").textContent = `Carnet d’enquête : ${etat.trouves.size} indice${etat.trouves.size > 1 ? "s" : ""} sur ${LIEUX.length}`;
+}
+
+function cliquerLieu(lieu) {
+  if (lieu.finale && !sortieOuverte()) {
+    const reste = LIEUX.filter(l => !l.finale).length - nbHorsFinale();
+    $("#astuce").textContent = `La sortie, ce sera pour la fin ! Il vous reste ${reste} lieu${reste > 1 ? "x" : ""} à explorer avant.`;
+    return;
+  }
+  ouvrirLieu(lieu);
+}
+
+/* =========================================================
+   FICHE D'UN LIEU
+   ========================================================= */
+function ouvrirLieu(lieu) {
+  etat.courant = lieu;
+  $("#fiche-titre").textContent = lieu.nom;
+  dlg.showModal();
+  afficherBulle(0);
+}
+
+function setBulle(txt) { bulle.textContent = txt; }
+
+function boutonAction(libelle, action, classe = "btn") {
+  const wrap = document.createElement("div");
+  wrap.className = "actions";
+  const b = document.createElement("button");
+  b.className = classe;
+  b.textContent = libelle;
+  b.addEventListener("click", action);
+  wrap.appendChild(b);
+  zone.appendChild(wrap);
+  b.focus();
+  return b;
+}
+
+function afficherBulle(i) {
+  const lieu = etat.courant;
+  setBulle(lieu.bulles[i]);
+  zone.innerHTML = "";
+  const dernier = i === lieu.bulles.length - 1;
+  boutonAction(dernier ? "C’est parti" : "Suivant", () => dernier ? lancerJeu(lieu) : afficherBulle(i + 1));
+}
+
+function lancerJeu(lieu) {
+  const fin = () => indiceTrouve(lieu);
+  if (lieu.jeu.type === "quiz") jeuQuiz(lieu, fin);
+  else if (lieu.jeu.type === "ordre") jeuOrdre(lieu, fin);
+  else if (lieu.jeu.type === "engagement") jeuEngagement(lieu, fin);
+}
+
+/* ---------- Mini-jeu : questions à choix ---------- */
+function jeuQuiz(lieu, fin) {
+  const qs = lieu.jeu.questions;
+  let i = 0;
+
+  function poser() {
+    const q = qs[i];
+    const opts = q.options || lieu.jeu.options;
+    setBulle(q.q);
+    zone.innerHTML = `
+      <p class="progression">Question ${i + 1} sur ${qs.length}</p>
+      <div class="options ${lieu.jeu.deux ? "deux" : ""}">
+        ${opts.map((o, k) => `<button class="btn-option" data-k="${k}">${o}</button>`).join("")}
+      </div>
+      <div class="retour" hidden></div>`;
+    zone.querySelectorAll(".btn-option").forEach(b =>
+      b.addEventListener("click", () => repondre(+b.dataset.k, opts)));
+    zone.querySelector(".btn-option").focus();
+  }
+
+  function repondre(k, opts) {
+    const q = qs[i];
+    const ok = k === q.bonne;
+    etat.total++; if (ok) etat.score++;
+    zone.querySelectorAll(".btn-option").forEach(b => {
+      b.disabled = true;
+      const n = +b.dataset.k;
+      if (n === q.bonne) b.classList.add("juste");
+      else if (n === k) b.classList.add("faux");
+    });
+    const r = zone.querySelector(".retour");
+    r.hidden = false;
+    r.className = "retour " + (ok ? "ok" : "ko");
+    const debut = ok
+      ? BRAVO[Math.floor(Math.random() * BRAVO.length)]
+      : `Pas tout à fait : la bonne réponse, c’est « ${opts[q.bonne]} ».`;
+    r.innerHTML = `<strong>${debut}</strong> ${q.expl}`;
+    const dernier = i === qs.length - 1;
+    boutonAction(dernier ? "Continuer" : "Question suivante", () => {
+      if (dernier) fin(); else { i++; poser(); }
+    });
+  }
+
+  poser();
+}
+
+/* ---------- Mini-jeu : remettre dans l'ordre ---------- */
+function jeuOrdre(lieu, fin) {
+  const items = lieu.jeu.items;
+  let prochain = 0;
+  let ordre = items.map((_, k) => k);
+  do { ordre.sort(() => Math.random() - .5); } while (ordre.every((v, k) => v === k));
+
+  setBulle(lieu.bulles[lieu.bulles.length - 1]);
+  zone.innerHTML = `
+    <ol class="pyramide" aria-label="Les niveaux, du plus proche au plus large">
+      ${items.map(() => `<li class="palier"><span aria-hidden="true">?</span><span class="sr">Niveau à trouver</span></li>`).join("")}
+    </ol>
+    <div class="options">
+      ${ordre.map(k => `<button class="btn-option" data-k="${k}">${items[k].nom}</button>`).join("")}
+    </div>
+    <div class="retour" hidden></div>`;
+
+  const paliers = zone.querySelectorAll(".palier");
+  const r = zone.querySelector(".retour");
+
+  zone.querySelectorAll(".btn-option").forEach(b => b.addEventListener("click", () => {
+    const k = +b.dataset.k;
+    r.hidden = false;
+    if (k === prochain) {
+      const p = paliers[prochain];
+      p.classList.add("rempli");
+      p.innerHTML = `<span><strong>${items[k].nom}</strong><small>${items[k].desc}</small></span>`;
+      b.remove();
+      prochain++;
+      r.className = "retour ok";
+      r.textContent = `${items[k].nom} : ${items[k].desc}.`;
+      if (prochain === items.length) {
+        r.className = "retour ok";
+        r.textContent = lieu.jeu.fin;
+        setBulle("Et voilà le réseau au complet !");
+        boutonAction("Continuer", fin);
+      } else {
+        const suivant = zone.querySelector(".options .btn-option");
+        if (suivant) suivant.focus();
+      }
+    } else {
+      b.classList.remove("secoue"); void b.offsetWidth; b.classList.add("secoue");
+      r.className = "retour ko";
+      r.textContent = prochain === 0
+        ? "Pas encore ! Commencez par le niveau le plus proche de l’école de votre enfant."
+        : "Pas encore ! Cherchez le niveau juste un peu plus large que le précédent.";
+    }
+  }));
+  zone.querySelector(".options .btn-option").focus();
+}
+
+/* ---------- Mini-jeu : comment participer ---------- */
+function jeuEngagement(lieu, fin) {
+  const opts = lieu.jeu.options;
+  zone.innerHTML = `
+    <div class="options">
+      ${opts.map((o, k) => `<button class="btn-option" data-k="${k}" aria-pressed="false">${o.titre}</button>`).join("")}
+    </div>
+    <div class="retour neutre" hidden></div>`;
+  const r = zone.querySelector(".retour");
+  let bouton = null;
+  zone.querySelectorAll(".btn-option").forEach(b => b.addEventListener("click", () => {
+    zone.querySelectorAll(".btn-option").forEach(x => { x.classList.remove("choisi"); x.setAttribute("aria-pressed", "false"); });
+    b.classList.add("choisi"); b.setAttribute("aria-pressed", "true");
+    const o = opts[+b.dataset.k];
+    r.hidden = false;
+    r.innerHTML = `<strong>${o.titre}.</strong> ${o.texte}`;
+    if (!bouton) {
+      bouton = boutonAction("Terminer l’enquête", fin);
+      b.focus();
+    }
+  }));
+  zone.querySelector(".btn-option").focus();
+}
+
+/* ---------- Indice trouvé ---------- */
+function indiceTrouve(lieu) {
+  etat.trouves.add(lieu.id);
+  majCarte();
+  const tout = etat.trouves.size === LIEUX.length;
+  setBulle(tout ? "Dernier indice trouvé ! On a tout ce qu’il faut pour répondre." : "Indice trouvé ! Je le note dans le carnet.");
+  zone.innerHTML = `
+    <div class="indice-carte">
+      <h3>Indice ${etat.trouves.size} sur ${LIEUX.length}</h3>
+      <p class="indice-texte"><mark>${lieu.phrase}</mark></p>
+      <p>${lieu.bilan}</p>
+    </div>`;
+  if (tout) {
+    boutonAction("Voir la réponse", () => { dlg.close(); conclure(); });
+  } else {
+    boutonAction("Retour à l’école", () => dlg.close());
+  }
+}
+
+dlg.addEventListener("close", () => {
+  if (!ecrans.ecole.hidden) {
+    if (sortieOuverte() && !etat.trouves.has("sortie")) {
+      $("#astuce").textContent = "Tous les indices de l’école sont trouvés ! La sortie est ouverte : c’est la dernière étape.";
+    } else if (etat.trouves.size > 0 && etat.trouves.size < LIEUX.length) {
+      const reste = LIEUX.length - etat.trouves.size;
+      $("#astuce").textContent = `Bien joué ! Encore ${reste} indice${reste > 1 ? "s" : ""} à trouver.`;
+    }
+  }
+});
+$("#fiche-fermer").addEventListener("click", () => dlg.close());
+
+/* =========================================================
+   CONCLUSION
+   ========================================================= */
+function conclure() {
+  const s = id => {
+    const k = LIEUX.findIndex(l => l.id === id);
+    return `<span class="surligne" style="--d:${k}">${LIEUX[k].indice}</span>`;
+  };
+  $("#definition").innerHTML =
+    `L’APEL, c’est ${s("portail")} ${s("classe")}, ${s("accueil")} et ${s("cour")}, ${s("toit")}, ${s("sortie")}.`;
+  $("#score").textContent = etat.total
+    ? `Vous avez trouvé la bonne réponse à ${etat.score} question${etat.score > 1 ? "s" : ""} sur ${etat.total}. Et maintenant, vous savez tout le reste !`
+    : "";
+  afficherEcran("fin");
+}
+
+/* =========================================================
+   DÉMARRAGE
+   ========================================================= */
+$("#lien-apel44").href = CONFIG.lienApel44;
+$("#lien-apel-national").href = CONFIG.lienApelNational;
+
+$("#btn-commencer").addEventListener("click", () => afficherEcran("ecole"));
+$("#btn-rejouer").addEventListener("click", () => {
+  etat.trouves.clear(); etat.score = 0; etat.total = 0;
+  majCarte();
+  $("#astuce").textContent = "C’est reparti ! Touchez un lieu de l’école pour commencer.";
+  afficherEcran("ecole");
+});
+
+construireCarte();
+</script>
+</body>
+</html>
