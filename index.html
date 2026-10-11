@@ -1,1 +1,11 @@
-<!doctype html><html lang="fr"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#163d3a"/><title>Mon APEL — Ensemble pour nos enfants</title></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#163d3a"/><title>Mon APEL — Ensemble pour nos enfants</title><script>
+(function(){
+  var publicPage = /^\/saint-joseph-oudon\/?$/.test(location.pathname);
+  if (!publicPage) return;
+  var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/oudon/manifest.webmanifest';document.head.appendChild(manifest);
+  var apple=document.createElement('link');apple.rel='apple-touch-icon';apple.href='/oudon/icon-192.png';document.head.appendChild(apple);
+  var appName=document.createElement('meta');appName.name='apple-mobile-web-app-title';appName.content='APEL Oudon';document.head.appendChild(appName);
+  var capable=document.createElement('meta');capable.name='apple-mobile-web-app-capable';capable.content='yes';document.head.appendChild(capable);
+  if('serviceWorker' in navigator) window.addEventListener('load',function(){navigator.serviceWorker.register('/sw-oudon.js',{scope:'/saint-joseph-oudon'}).catch(function(e){console.warn('PWA non disponible',e)});});
+})();
+</script></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
