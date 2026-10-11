@@ -1,0 +1,26 @@
+/* Mise en page limitée à l’onglet Réunions de l’espace bureau. */
+.meetings-module .record { min-width: 0; }
+.meetings-module .record > .quick,
+.meetings-module .pageheading > .quick,
+.meetings-module .form > .quick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+.meetings-module .quick > button {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  line-height: 1.35;
+}
+.meetings-module .record > .quick > button { padding: 9px 11px; }
+@media (max-width: 620px) {
+  .meetings-module .pageheading > .quick { width: 100%; }
+  .meetings-module .pageheading > .quick > button { flex: 1 1 100%; justify-content: center; }
+}
