@@ -8,4 +8,13 @@
   var capable=document.createElement('meta');capable.name='apple-mobile-web-app-capable';capable.content='yes';document.head.appendChild(capable);
   if('serviceWorker' in navigator) window.addEventListener('load',function(){navigator.serviceWorker.register('/sw-oudon.js',{scope:'/saint-joseph-oudon'}).catch(function(e){console.warn('PWA non disponible',e)});});
 })();
+</script><script>
+(function(){
+  if(!/^\/bureau(?:\/)?$/.test(location.pathname))return;
+  var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/bureau/manifest.webmanifest';document.head.appendChild(manifest);
+  var apple=document.createElement('link');apple.rel='apple-touch-icon';apple.href='/bureau/icon-192.png';document.head.appendChild(apple);
+  var appName=document.createElement('meta');appName.name='apple-mobile-web-app-title';appName.content='Mon APEL Bureau';document.head.appendChild(appName);
+  var capable=document.createElement('meta');capable.name='apple-mobile-web-app-capable';capable.content='yes';document.head.appendChild(capable);
+  if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('/bureau/sw-bureau.js',{scope:'/bureau/'}).catch(function(e){console.warn('PWA Bureau non disponible',e)});});
+})();
 </script></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
