@@ -1,0 +1,26 @@
+{
+  "name": "APEL Saint-Joseph Oudon",
+  "short_name": "APEL Oudon",
+  "description": "Actualités, agenda et vie de l’APEL Saint-Joseph d’Oudon",
+  "id": "/saint-joseph-oudon",
+  "start_url": "/saint-joseph-oudon?source=pwa",
+  "scope": "/saint-joseph-oudon",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#163d3a",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/oudon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/oudon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
