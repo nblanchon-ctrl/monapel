@@ -30,18 +30,34 @@ export default function InstallPrompt({ kind }: { kind: Kind }) {
   }, [key]);
 
   useEffect(() => {
-    const onBeforeInstall = (e: Event) => { e.preventDefault(); setInstallEvent(e as InstallEvent); };
+    const onBeforeInstall = (e: Event) => {
+      // Ne jamais conserver une proposition d'installation issue d'une autre route/PWA.
+      const path = window.location.pathname;
+      const correctRoute = kind === 'bureau' ? /^\/bureau\/?$/.test(path) : /^\/saint-joseph-oudon\/?$/.test(path);
+      const manifest = document.querySelector<HTMLLinkElement>('link[rel=\"manifest\"]')?.getAttribute('href');
+      const correctManifest = kind === 'bureau' ? manifest === '/bureau/manifest.webmanifest' : manifest === '/oudon/manifest.webmanifest';
+      if (!correctRoute || !correctManifest) return;
+      e.preventDefault();
+      setInstallEvent(e as InstallEvent);
+    };
     const onInstalled = () => { setInstalled(true); setVisible(false); };
     window.addEventListener('beforeinstallprompt', onBeforeInstall);
     window.addEventListener('appinstalled', onInstalled);
     return () => { window.removeEventListener('beforeinstallprompt', onBeforeInstall); window.removeEventListener('appinstalled', onInstalled); };
-  }, []);
+  }, [kind]);
 
   if (!visible || installed) return null;
   const publicApp = kind === 'public';
   const name = publicApp ? 'APEL Saint-Joseph Oudon' : 'Mon APEL Bureau';
   const close = () => { localStorage.setItem(key, String(Date.now())); setVisible(false); };
   const install = async () => {
+    const manifest = document.querySelector<HTMLLinkElement>('link[rel=\"manifest\"]')?.getAttribute('href');
+    const expected = kind === 'bureau' ? '/bureau/manifest.webmanifest' : '/oudon/manifest.webmanifest';
+    if (manifest !== expected) {
+      // Recharge la bonne entrée, plutôt que d'installer la mauvaise application.
+      window.location.assign(kind === 'bureau' ? '/bureau/' : '/saint-joseph-oudon');
+      return;
+    }
     if (installEvent) {
       try {
         await installEvent.prompt();
