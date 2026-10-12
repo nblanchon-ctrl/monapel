@@ -1,4 +1,4 @@
-import PushOptIn from './pwa/PushOptIn';
+import PushOptIn from './pwa/PushOptln';
 import InstallPrompt from './pwa/InstallPrompt';
 import VolunteersModule from './volunteers/VolunteersModule';
 import BoardModule from './governance/BoardModule';
