@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /bureau/
+Sitemap: https://monapel.fr/sitemap.xml
