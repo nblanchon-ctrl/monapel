@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import type {SupabaseClient} from '@supabase/supabase-js';
-import './PushOptln.css';
+import './PushOptIn.css';
 type Props={db:SupabaseClient|null;kind:'public'|'bureau';userId?:string|null};
 const PUBLIC_KEY=import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY||'';
 function toBytes(base64:string){const padded=(base64+'='.repeat((4-base64.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');return Uint8Array.from(atob(padded),c=>c.charCodeAt(0));}
