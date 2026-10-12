@@ -10,3 +10,5 @@ self.addEventListener('fetch', event => {
  if(req.mode==='navigate' || !PUBLIC_ASSETS.includes(url.pathname)) return;
  event.respondWith(caches.match(req).then(hit=>hit||fetch(req)));
 });
+self.addEventListener('push',event=>{let data={};try{data=event.data?.json()||{}}catch{};event.waitUntil(self.registration.showNotification(data.title||'APEL Saint-Joseph Oudon',{body:data.body||'Une nouvelle information est disponible.',icon:'/oudon/icon-192.png',badge:'/oudon/icon-192.png',tag:data.tag||'public-update',data:{url:data.url||'/saint-joseph-oudon'}}));});
+self.addEventListener('notificationclick',event=>{event.notification.close();const target=new URL(event.notification.data?.url||'/saint-joseph-oudon',self.location.origin);if(target.origin!==self.location.origin||!target.pathname.startsWith('/saint-joseph-oudon'))return;event.waitUntil(self.clients.openWindow(target.href));});
