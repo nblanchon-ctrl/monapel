@@ -81,3 +81,24 @@
  .oudon-feedback{left:12px;right:12px;bottom:12px;max-width:none}
 }
 @media(max-width:360px){.oudon-header{align-items:flex-start}.oudon-brand{font-size:12px}.oudon-apel{font-size:26px}.oudon-office{font-size:11px}.oudon-header nav button{font-size:11px}.oudon-copy h1{font-size:32px}}
+
+/* Menu hamburger responsive */
+.oudon-menu-toggle{display:none;align-items:center;justify-content:center;gap:8px;background:#e9f9fd;color:#103a70;border:1px solid #c6eaf4;border-radius:12px;padding:10px 13px;font-weight:750;min-height:44px}
+@media(max-width:1150px){
+ .oudon-header{position:relative;flex-wrap:nowrap;min-height:72px;gap:10px}
+ .oudon-menu-toggle{display:inline-flex;order:3;flex-shrink:0}
+ .oudon-header nav{display:none;position:absolute;top:calc(100% - 1px);left:12px;right:12px;width:auto;order:unset;flex:unset;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;max-height:min(75vh,600px);overflow-y:auto;overflow-x:hidden;background:white;border:1px solid #d4eaf2;border-radius:0 0 18px 18px;box-shadow:0 16px 30px rgba(16,58,112,.15);padding:12px;z-index:20}
+ .oudon-header nav.oudon-nav-open{display:flex}
+ .oudon-header nav button{display:block;width:100%;min-height:46px;text-align:left;padding:12px 15px;border-radius:10px;font-size:15px;white-space:normal;background:transparent}
+ .oudon-header nav button:hover,.oudon-header nav .is-active{background:#e9f9fd;color:#007c9c;border-bottom:0}
+ .oudon-office{margin-left:auto}
+}
+@media(max-width:520px){
+ .oudon-header{padding:10px 12px;gap:8px}
+ .oudon-brand{gap:5px;font-size:14px}
+ .oudon-apel{font-size:30px}
+ .oudon-menu-toggle{padding:9px 11px;font-size:13px}
+ .oudon-menu-toggle span{display:none}
+ .oudon-office{padding:10px;font-size:11px;white-space:normal;max-width:135px;line-height:1.2}
+ .oudon-office svg{flex-shrink:0}
+}
