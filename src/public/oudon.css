@@ -27,3 +27,57 @@
 .oudon-game-promo p{max-width:66ch;line-height:1.65;margin:0 0 22px}
 .oudon-game-promo .oudon-primary{display:inline-flex;align-items:center;gap:9px;text-decoration:none}
 @media(max-width:640px){.oudon-game-promo{margin:24px 0;border-radius:18px}}
+
+/* Responsive public site improvements - 2026-10-13 */
+.oudon-site{width:100%;max-width:100%;overflow-x:clip}
+.oudon-site img,.oudon-site video,.oudon-site iframe{max-width:100%}
+.oudon-site button,.oudon-site a,.oudon-site input,.oudon-site textarea,.oudon-site select{min-width:0}
+.oudon-site .oudon-content-card,.oudon-site .oudon-parent-card,.oudon-site .oudon-tile{min-width:0;overflow-wrap:anywhere}
+.oudon-form input,.oudon-form textarea,.oudon-form select{width:100%;max-width:100%;font-size:16px}
+.oudon-site .oudon-dialog,.oudon-site .oudon-volunteer-dialog{max-width:100%;overscroll-behavior:contain}
+@media(max-width:1200px){
+ .oudon-header{height:auto;min-height:80px;flex-wrap:wrap;gap:8px 16px;padding:12px clamp(16px,3vw,35px)}
+ .oudon-header nav{order:3;flex:0 0 100%;width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:3px 12px;overflow:visible}
+ .oudon-header nav button{padding:10px 6px;white-space:normal;min-height:44px}
+ .oudon-hero-inner{grid-template-columns:140px minmax(0,1fr) minmax(240px,36%);padding-left:20px}
+ .oudon-copy{min-width:0}
+}
+@media(max-width:800px){
+ .oudon-hero-inner{display:flex;flex-direction:column;align-items:stretch;min-height:0;padding:24px 22px 0}
+ .oudon-logo-wrap img{width:115px;max-width:100%}
+ .oudon-copy{padding:14px 0 28px;max-width:100%}
+ .oudon-copy h1{font-size:clamp(34px,7vw,50px);letter-spacing:-1.5px}
+ .oudon-landscape{height:245px;min-height:245px;clip-path:ellipse(95% 88% at 50% 62%);margin:0 -22px}
+ .oudon-tiles,.oudon-latest-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .oudon-parent-grid{grid-template-columns:1fr}
+ .oudon-inner-page{padding:35px 22px 65px}
+ .oudon-mission,.oudon-latest,.oudon-parent-voice{padding:0 22px;margin:45px auto}
+}
+@media(max-width:560px){
+ .oudon-header{padding:10px 14px;gap:8px}
+ .oudon-brand{gap:7px;font-size:14px}
+ .oudon-apel{font-size:30px}
+ .oudon-office{font-size:12px;padding:10px 11px;border-radius:11px;white-space:normal;text-align:center;max-width:48%;min-height:44px}
+ .oudon-header nav{gap:4px 6px;justify-content:flex-start}
+ .oudon-header nav button{flex:1 1 auto;font-size:12px;line-height:1.25;padding:10px 8px;border-radius:9px;background:#f0f9fc;text-align:center}
+ .oudon-header nav .is-active{border-bottom:0;background:#d8f4fb}
+ .oudon-copy h1{font-size:clamp(34px,10vw,45px)}
+ .oudon-copy p,.oudon-mission p,.oudon-inner-page>p{font-size:16px;line-height:1.6}
+ .oudon-kicker{letter-spacing:2px;font-size:11px}
+ .oudon-actions{flex-direction:column;align-items:stretch;gap:10px}
+ .oudon-actions button,.oudon-site .oudon-primary,.oudon-site .oudon-secondary{max-width:100%;white-space:normal;text-align:center;min-height:44px}
+ .oudon-tiles,.oudon-latest-grid,.oudon-contact-grid,.oudon-content-grid,.oudon-volunteer-grid{grid-template-columns:minmax(0,1fr)}
+ .oudon-tiles{padding:0 16px}
+ .oudon-tile{padding:18px 16px}
+ .oudon-inner-page{padding:24px 16px 55px}
+ .oudon-inner-page h1{font-size:clamp(30px,9vw,42px)}
+ .oudon-mission,.oudon-latest,.oudon-parent-voice{padding:0 16px;margin:36px auto}
+ .oudon-content-card,.oudon-contact-card,.oudon-parent-card{padding:20px}
+ .oudon-footer{padding:22px 16px;flex-direction:column;overflow-wrap:anywhere}
+ .oudon-overlay,.oudon-modal-overlay{padding:10px;align-items:center}
+ .oudon-dialog,.oudon-volunteer-dialog{width:100%;max-height:calc(100dvh - 20px);border-radius:18px;padding:20px 16px;overflow-y:auto}
+ .oudon-dialog h2{font-size:24px}
+ .oudon-volunteer-fields{grid-template-columns:minmax(0,1fr)}
+ .oudon-feedback{left:12px;right:12px;bottom:12px;max-width:none}
+}
+@media(max-width:360px){.oudon-header{align-items:flex-start}.oudon-brand{font-size:12px}.oudon-apel{font-size:26px}.oudon-office{font-size:11px}.oudon-header nav button{font-size:11px}.oudon-copy h1{font-size:32px}}
