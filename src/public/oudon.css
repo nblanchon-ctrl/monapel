@@ -102,3 +102,20 @@
  .oudon-office{padding:10px;font-size:11px;white-space:normal;max-width:135px;line-height:1.2}
  .oudon-office svg{flex-shrink:0}
 }
+
+/* Identité de marque alignée sur monapel.fr et accès bureau discret */
+.oudon-brand{display:inline-flex;align-items:center;gap:0;color:#123a68;text-align:left;flex-shrink:0}
+.oudon-wordmark{display:inline-block;font-size:26px;font-weight:800;letter-spacing:-1px;line-height:1;color:#123a68;font-style:normal;white-space:nowrap}
+.oudon-wordmark>span{color:#009ec4}
+.oudon-wordmark>small{display:block;margin-top:5px;font-size:11px;font-weight:500;letter-spacing:1px;line-height:1.1;color:#66839b}
+.oudon-office,.oudon-office:hover{background:transparent;color:#54728a;border:1px solid #dce9ef;border-radius:10px;box-shadow:none;font-weight:550;font-size:12px;padding:9px 11px;gap:7px;min-height:40px;transition:background .15s,color .15s}
+.oudon-office:hover{background:#f1f8fb;color:#123a68;border-color:#c6dfe8}
+.oudon-office:focus-visible,.oudon-brand:focus-visible{outline:3px solid #009ec4;outline-offset:3px}
+@media(max-width:1150px){.oudon-office{margin-left:auto}}
+@media(max-width:520px){
+ .oudon-wordmark{font-size:21px}
+ .oudon-wordmark>small{font-size:9px;letter-spacing:.65px;margin-top:3px}
+ .oudon-office{font-size:0!important;min-width:40px;min-height:40px;width:40px;max-width:40px!important;padding:8px!important;flex-shrink:0;gap:0;border-radius:10px}
+ .oudon-office svg{width:17px;height:17px}
+ .oudon-menu-toggle{min-width:44px;min-height:44px}
+}
