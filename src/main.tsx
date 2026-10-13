@@ -158,11 +158,11 @@ useEffect(()=>{
  const refresh=async()=>{
   const {data,error}=await db.rpc('apel_section_unread_counts');
   if(!stopped&&!error){const next:Record<string,number>={};for(const row of data||[])next[String(row.section)]=Number(row.unread_count)||0;setSectionAlerts(next)}
-  if(error)console.warn('Pastilles de notifications :',error.message);
+  if(error){console.error('Pastilles de notifications :',error.message);if(!stopped)setNotice('Notifications : '+error.message+' — vérifiez le script SQL Supabase.');}
  };
  void refresh();const timer=window.setInterval(()=>void refresh(),20000);
- window.addEventListener('focus',refresh);
- return()=>{stopped=true;window.clearInterval(timer);window.removeEventListener('focus',refresh)};
+ window.addEventListener('focus',refresh);window.addEventListener('apel-section-updated',refresh);
+ return()=>{stopped=true;window.clearInterval(timer);window.removeEventListener('focus',refresh);window.removeEventListener('apel-section-updated',refresh)};
 },[session?.user.id,profile?.active]);
 async function visitSection(id:string){
  setPage(id);setMobile(false);setNotice('');
