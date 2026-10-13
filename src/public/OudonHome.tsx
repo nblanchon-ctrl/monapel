@@ -2,7 +2,7 @@ import RichText from '../editor/RichText';
 import QuestionsParents from '../questions/QuestionsParents';
 import React, {useEffect,useState} from 'react';
 import type {SupabaseClient} from '@supabase/supabase-js';
-import {ArrowRight,CalendarDays,Users,Newspaper,Megaphone,LockKeyhole,HeartHandshake,MapPin,Mail,Lightbulb,MessageCircle,Gift,X} from 'lucide-react';
+import {ArrowRight,CalendarDays,Users,Newspaper,Megaphone,LockKeyhole,HeartHandshake,MapPin,Mail,Lightbulb,MessageCircle,Gift,X,Menu} from 'lucide-react';
 import './oudon.css';
 
 type Item=Record<string,unknown>;
@@ -10,7 +10,8 @@ type Props={page:string;onNavigate:(page:string)=>void;posts:Item[];events:Item[
 const label=(v:unknown)=>typeof v==='string'?v:'';
 const formatDate=(v:unknown)=>{const d=new Date(label(v));return Number.isNaN(d.getTime())?'':d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})};
 export default function OudonHome({page,onNavigate,posts,events,bureau,db}:Props){
- const nav=(page:string)=>{if(page==='contact'){setContactOpen(true);setFeedback('');return;}onNavigate(page);};
+ const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
+ const nav=(page:string)=>{setMobileMenuOpen(false);if(page==='contact'){setContactOpen(true);setFeedback('');return;}onNavigate(page);};
  const [formKind,setFormKind]=useState<'ideas'|'concerns'|'donation'|null>(null);
  const [form,setForm]=useState({title:'',description:'',name:'',email:'',phone:'',amount:''});
  const [sending,setSending]=useState(false);
@@ -52,7 +53,8 @@ export default function OudonHome({page,onNavigate,posts,events,bureau,db}:Props
  return <div className="oudon-site">
   <header className="oudon-header">
    <button className="oudon-brand" onClick={()=>nav('home')} aria-label="Accueil APEL Saint-Joseph Oudon"><span className="oudon-apel">apel</span><span>Mon APEL</span></button>
-   <nav aria-label="Navigation publique"><button className={page==='home'?'is-active':''} onClick={()=>nav('home')}>Accueil</button><button className={page==='about'||page==='bureau-public'?'is-active':''} onClick={()=>nav('about')}>Notre APEL</button><button onClick={()=>nav('participate')}>Vie de l’école</button><button className={page==='news'?'is-active':''} onClick={()=>nav('news')}>Actualités</button><button className={page==='agenda'?'is-active':''} onClick={()=>nav('agenda')}>Agenda</button><button className={page==='contact'?'is-active':''} onClick={()=>nav('contact')}>Nous contacter</button></nav>
+   <button type="button" className="oudon-menu-toggle" aria-label={mobileMenuOpen?"Fermer le menu":"Ouvrir le menu"} aria-expanded={mobileMenuOpen} aria-controls="oudon-public-navigation" onClick={()=>setMobileMenuOpen(v=>!v)}>{mobileMenuOpen?<X size={25}/>:<Menu size={25}/>}<span>Menu</span></button>
+   <nav id="oudon-public-navigation" className={mobileMenuOpen?"oudon-nav-open":""} aria-label="Navigation publique"><button className={page==='home'?'is-active':''} onClick={()=>nav('home')}>Accueil</button><button className={page==='about'||page==='bureau-public'?'is-active':''} onClick={()=>nav('about')}>Notre APEL</button><button onClick={()=>nav('participate')}>Vie de l’école</button><button className={page==='news'?'is-active':''} onClick={()=>nav('news')}>Actualités</button><button className={page==='agenda'?'is-active':''} onClick={()=>nav('agenda')}>Agenda</button><button className={page==='contact'?'is-active':''} onClick={()=>nav('contact')}>Nous contacter</button></nav>
    {page!=='bureau-public'&&<button className="oudon-office" onClick={()=>nav('login')}><LockKeyhole size={16}/> Mon espace bureau</button>}
   </header>
   <main>
