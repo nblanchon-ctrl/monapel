@@ -166,9 +166,18 @@ useEffect(()=>{
 },[session?.user.id,profile?.active]);
 async function visitSection(id:string){
  setPage(id);setMobile(false);setNotice('');
- if(!db||!session?.user.id||!sectionAlerts[id])return;
- const {error}=await db.rpc('apel_mark_section_seen',{p_section:id});
- if(!error)setSectionAlerts(prev=>({...prev,[id]:0}));
+ if(!db||!session?.user.id)return;
+ // Marquer comme consultées les notifications de cette rubrique, sans affecter les autres membres.
+ const ids=notifications.filter(n=>n.section===id&&!readIds.includes(n.id)).map(n=>n.id);
+ if(ids.length){
+  const {error:readError}=await db.from('notification_reads').upsert(ids.map(notification_id=>({notification_id,user_id:session.user.id})),{onConflict:'notification_id,user_id'});
+  if(!readError)setReadIds(prev=>[...new Set([...prev,...ids])]);
+  else console.error('Lecture des notifications :',readError.message);
+ }
+ if(sectionAlerts[id]){
+  const {error}=await db.rpc('apel_mark_section_seen',{p_section:id});
+  if(!error)setSectionAlerts(prev=>({...prev,[id]:0}));
+ }
 }
 async function markRead(id:string){
  if(!db||!session?.user.id)return;
@@ -208,7 +217,13 @@ async function submitParticipation(e:React.FormEvent){
  setNotice(publicAction==='donation'?'Merci ! Le bureau vous contactera pour organiser votre don. Aucun paiement n’a été effectué.':'Merci ! Votre proposition de bénévolat a été transmise au bureau.');
 }
 async function login(e:React.FormEvent){e.preventDefault();if(!db)return;const {error}=isReset?await db.auth.resetPasswordForEmail(authEmail,{redirectTo:window.location.origin}):await db.auth.signInWithPassword({email:authEmail,password:authPass});setNotice(error?error.message:isReset?'Un e-mail de réinitialisation a été demandé.':'')}
-const NavButton=({id,label,Icon}:{id:string;label:string;Icon:React.ComponentType<{size?:number}>})=><button className={'navitem '+(page===id?'selected':'')} onClick={()=>void visitSection(id)}><Icon size={19}/><span>{label}</span>{id==='parent-messages'&&parentUnread>0&&<span style={{marginLeft:'auto',background:'#dc2626',color:'white',borderRadius:999,minWidth:22,height:22,padding:'0 6px',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}} aria-label={`${parentUnread} nouveaux messages de parents`}>{parentUnread>99?'99+':parentUnread}</span>}{(sectionAlerts[id]||0)>0&&<span style={{marginLeft:'auto',background:'#dc2626',color:'white',borderRadius:999,minWidth:22,height:22,padding:'0 6px',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}} aria-label={`${sectionAlerts[id]} nouveautés`}>{sectionAlerts[id]>99?'99+':sectionAlerts[id]}</span>}{id==='finance'&&financeUnread>0&&<span className="finance-nav-badge" aria-label={`${financeUnread} notifications financières non lues`}>{financeUnread>99?'99+':financeUnread}</span>}</button>;
+// Le menu affiche aussi les notifications d'activité non lues si le compteur RPC est vide.
+// Ainsi les pastilles restent visibles dans le menu, comme dans la rubrique elle-même.
+const navUnread=(id:string)=>{
+ const activityCount=notifications.filter(n=>n.section===id&&!readIds.includes(n.id)&&n.actor_id!==session?.user.id).length;
+ return Math.max(sectionAlerts[id]||0,activityCount);
+};
+const NavButton=({id,label,Icon}:{id:string;label:string;Icon:React.ComponentType<{size?:number}>})=><button className={'navitem '+(page===id?'selected':'')} onClick={()=>void visitSection(id)}><Icon size={19}/><span>{label}</span>{id==='parent-messages'&&parentUnread>0&&<span style={{marginLeft:'auto',background:'#dc2626',color:'white',borderRadius:999,minWidth:22,height:22,padding:'0 6px',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}} aria-label={`${parentUnread} nouveaux messages de parents`}>{parentUnread>99?'99+':parentUnread}</span>}{navUnread(id)>0&&<span style={{marginLeft:'auto',background:'#dc2626',color:'white',borderRadius:999,minWidth:22,height:22,padding:'0 6px',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}} aria-label={`${navUnread(id)} nouveautés`}>{navUnread(id)>99?'99+':navUnread(id)}</span>}{id==='finance'&&financeUnread>0&&<span className="finance-nav-badge" aria-label={`${financeUnread} notifications financières non lues`}>{financeUnread>99?'99+':financeUnread}</span>}</button>;
 const active=!!session&&!!profile?.active;
 const inBureau=active&&!['home','news','agenda','participate','about','login'].includes(page);
 async function loadGovernance(){
